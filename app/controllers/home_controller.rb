@@ -1,5 +1,6 @@
 class HomeController < ApplicationController
   def index
+    @book_count = 0
     file_count = 1
     file_exist = 1
     files_names = []
@@ -24,12 +25,26 @@ class HomeController < ApplicationController
     files_names.each do |i|
       if i[4,3] == "TXT"
         file = File.new("i/R/" + i[0,3] + ".txt", 'w')
-        file.puts "ета ТХТшычный файличег"
+        original_file = File.open("i/" + i, 'r')
+        original_file.each_line do |line|
+          regex = /^(\d{3,})/.match (line)
+          file.puts regex[1]
+          @book_count += 1
+        end
         file.close
+        original_file.close
       elsif i[4,3] == "pwd"
         file = File.new("i/R/" + i[0,3] + ".txt", 'w')
-        file.puts "а ета ПВДшычный фаличег... ага.... "
+        original_file = File.open("i/" + i, 'r')
+        original_file.each_line do |line|
+          regex = /^(\d{3,})/.match (line)
+          if regex != nil
+            file.puts regex[1]
+            @book_count += 1
+          end
+        end
         file.close
+        original_file.close
       end
     end
 
