@@ -48,22 +48,17 @@ class HomeController < ApplicationController
       end
     end
 
-
-
-    @count = 1
-    @table = Array.new().map! { Array.new(3) }
+    count = 1
+    @table = Array.new(@book_count).map! { Array.new(2) }
 
     files_names.each do |i|
-      file_name = i.to_s
-      file = File.open("i/" + file_name)
-      if file_name[4,3] == 'TXT'
-        file_name.each_line do |line|
-          @table[@count,1] = @count
-          @table[@count,2] = file_name[0,3]
-          @table[@count,3] = line.split[0]
-        end
+      file = File.open("i/R/" + i[0,3] + '.txt')
+      file.each_line do |line|
+        @table[count][1] = i[0,3]
+        @table[count][2] = line
       end
-      @count += 1
+      file.close
+      count += 1
     end
   end
 end
