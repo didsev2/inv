@@ -1,12 +1,84 @@
 Общее колличество отсканированных книг <%= @book_count %><br>
 <% if @error_count > 0 %>
-  Колличество ошибок <%= @error_count %><br><br>
-  <% count = 1 %>
-  Номер стеллажа с ошибочным штрихом: <%= @errors[0][0] %><br>
-  Порядковый  номер книги с ошибочным штрихом: <%= @errors[0][2] %><br>
-  Всего книг на стеллаже: <%= @errors[0][1] %><br>
-  Ошибочный штрихкод: <%= @errors[0][3] %><br>
-  <% count += 1 %>
+  Найденно несоответствий: <%= @error_count %><br><br>
+  <table>
+  <% if @type_errors[1] == 1 %>
+    <tr>
+      <td colspan="6">Штрихкоды короче чем 13 цифр</td>
+    </tr>
+    <tr>
+      <th>Стеллаж</th>
+      <th>№ книги</th>
+      <th>Книг на стеллаже</th>
+      <th>Штрих до ошибочного</th>
+      <th>Ошибочный штрихкод</th>
+      <th>Штрих после ошибочного</th>
+    </tr>
+    <% for count in 0..@error_count - 1 %>
+      <% if @errors[count][3].size < 14 %>
+        <tr>
+          <td><%= @errors[count][0] %></td>
+          <td><%= @errors[count][2] %></td>
+          <td><%= @errors[count][1] %></td>
+          <td><strong><%= @errors[count][4] %></strong></td >
+          <td><strong><span style="color: red"><%= @errors[count][3] %></span></strong></td>
+          <td><strong><%= @errors[count][5] %></strong></td>
+          </tr>
+      <% end %>
+    <% end %>
+  <% end %>
+  <% if @type_errors[2] == 1 %>
+    <tr>
+      <td colspan="6">Ошибочные штрихкоды</td>
+    </tr>
+    <tr>
+      <th>Стеллаж</th>
+      <th>№ книги</th>
+      <th>Книг на стеллаже</th>
+      <th>Штрих до ошибочного</th>
+      <th>Ошибочный штрихкод</th>
+      <th>Штрих после ошибочного</th>
+    </tr>
+    <% for count in 0..@error_count - 1 %>
+      <% if @errors[count][3][0,3] != '978' and @errors[count][3][0,2] != '20' and @errors[count][3].size == 14 %>
+        <tr>
+          <td><%= @errors[count][0] %></td>
+          <td><%= @errors[count][2] %></td>
+          <td><%= @errors[count][1] %></td>
+          <td><strong><%= @errors[count][4] %></strong></td >
+          <td><strong><span style="color: red"><%= @errors[count][3] %></span></strong></td>
+          <td><strong><%= @errors[count][5] %></strong></td>
+          </tr>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% if @type_errors[3] == 1 %>
+    <tr>
+      <td colspan="6">Штрихкоды начинающиеся на 978</td>
+    </tr>
+    <tr>
+      <th>Стеллаж</th>
+      <th>№ книги</th>
+      <th>Книг на стеллаже</th>
+      <th>Штрих до ошибочного</th>
+      <th>Ошибочный штрихкод</th>
+      <th>Штрих после ошибочного</th>
+    </tr>
+    <% for count in 0..@error_count - 1 %>
+      <% if @errors[count][3][0,3] == '978' %>
+        <tr>
+          <td><%= @errors[count][0] %></td>
+          <td><%= @errors[count][2] %></td>
+          <td><%= @errors[count][1] %></td>
+          <td><strong><%= @errors[count][4] %></strong></td >
+          <td><strong><span style="color: red"><%= @errors[count][3] %></span></strong></td>
+          <td><strong><%= @errors[count][5] %></strong></td>
+          </tr>
+      <% end %>
+  <% end %>
+<% end %>
+</table>
 <% else %>
   Ошибок в файлах не обнаруженно
 <% end %>

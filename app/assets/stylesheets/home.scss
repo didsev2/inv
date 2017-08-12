@@ -1,6 +1,16 @@
+Body{
+  font-size: 20px;
+}
 table, td{
   border-width: 2px;
   border-color: gray;
   border-style:solid;
   padding: 5px;
+  text-align: center;
+  font-size: 20px;
+}
+table, th{
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 15px;
 }

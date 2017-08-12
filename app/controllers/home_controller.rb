@@ -18,7 +18,7 @@ class HomeController < ApplicationController
       end
       file_count += 1
     end
-    files_names[file_count-2] = "" if file_exist == 0
+    # files_names[file_count-2] = "" if file_exist == 0
 
     FileUtils.rm_r('i/R') if FileTest::exist?("i/R")                            #Удаление папки i/R в случае если она существует
     Dir.mkdir("i/R")                                                            # Создание папки i/R
@@ -50,38 +50,48 @@ class HomeController < ApplicationController
     end
 
     count = 1
-    @error_count = 0
     @table = Array.new(@book_count + 1).map! { Array.new(2) }
-#0 номер стеллажа, 1 всего книг на стеллаже, 2 индекс ошибочного штриха, 3 ошибочный штрих, 4 штрих до, 5 штрих после
-    @errors = Array.new(500).map! { Array.new(5) }
-    @error_count = 0
-
     files_names.each do |i|
-      if i != ""
-        file = File.open("i/R/" + i[0,3] + '.txt')
-        i2 = 0
-        file.each_line do |all_books|
-          i2 += 1
-        end
-        file.close
-
         file = File.open("i/R/" + i[0,3] + '.txt')
         stelaj_index = 1
         file.each_line do |line|
           @table[count][0] = stelaj_index
           @table[count][1] = i[0,3]
           @table[count][2] = line
-          if line.size < 14
-            @errors[@error_count][0] = i[0,3]
-            @errors[@error_count][1] = i2
-            @errors[@error_count][2] = stelaj_index
-            @errors[@error_count][3] = line
-            @error_count += 1
-          end
           stelaj_index += 1
           count += 1
         end
         file.close
+    end
+
+    @type_errors = Array(3)
+    for i in 1..(count - 1)
+      @type_errors[1] = 1 if @table[i][2].size < 14
+      @type_errors[2] = 1 if @table[i][2][0,2] != '20' and @table[i][2][0,3] != '978'
+      @type_errors[3] = 1 if @table[i][2][0,3] == '978'
+    end
+
+    #     0 номер стеллажа
+    #     1 всего книг на стеллаже
+    #     2 порядковый номер книги с ошибочным штрихом
+    #     3 ошибочный штрих
+    #     4 номер строки штриха до ошибочного
+    #     5 номер строки штриха после ошибочного
+    @errors = Array.new(500).map! { Array.new(5) }
+    @error_count = 0
+    for i in 1..(count - 1)
+      if @table[i][2].size < 14 or @table[i][2][0,2] != '20'
+        @errors[@error_count][0] = @table[i][1]
+        i2 = 0
+        for f in 1..(count - 1)
+          i2 += 1 if @table[f][1] == @table[i][1]
+        end
+        @errors[@error_count][1] = i2
+        @errors[@error_count][2] = @table[i][0]
+        @errors[@error_count][3] = @table[i][2].to_s
+        @errors[@error_count][4] = @table[i-1][2].to_s
+        @errors[@error_count][5] = @table[i+1][2].to_s
+        @error_count += 1
       end
     end
   end
