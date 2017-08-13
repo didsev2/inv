@@ -1,6 +1,14 @@
 Body{
   font-size: 20px;
+  background-color: #778899;
 }
+
+table {
+  box-shadow: 5px 5px 3px;
+  transition: all 0.3s ease;
+  margin-bottom: 17px;
+}
+
 table, td{
   border-width: 2px;
   border-color: gray;
@@ -8,9 +16,40 @@ table, td{
   padding: 5px;
   text-align: center;
   font-size: 20px;
+  background-color: white;
 }
+
 table, th{
   padding-left: 10px;
   padding-right: 10px;
   font-size: 15px;
+}
+
+a{
+  text-decoration: none;
+  color: #000;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  background-color: black;
+  color: white;
+}
+
+table:hover {
+  box-shadow: none;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.wrapper_header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
 }

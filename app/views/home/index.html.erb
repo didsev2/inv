@@ -1,10 +1,27 @@
-Общее колличество отсканированных книг <%= @book_count %><br>
-<% if @error_count > 0 %>
-  Найденно несоответствий: <%= @error_count %><br><br>
-  <table>
+<div class="wrapper">
+  <div class="wrapper_header">
+    <% if @error_count > 0 %>
+    <div>
+      <table>
+        <tr>
+          <td>Найденно ошибок: <%= @error_count %></td>
+        </tr>
+      </table>
+    </div>
+
+    <div>
+      <table>
+        <tr>
+          <td>Общее колличество отсканированных книг <%= @book_count %><br></td>
+        </tr>
+      </table>
+    </div>
+  </div><br><br>
+  
   <% if @type_errors[1] == 1 %>
+  <table>
     <tr>
-      <td colspan="6">Штрихкоды короче чем 13 цифр</td>
+      <td colspan="7">Штрихкоды короче чем 13 цифр</td>
     </tr>
     <tr>
       <th>Стеллаж</th>
@@ -13,6 +30,7 @@
       <th>Штрих до ошибочного</th>
       <th>Ошибочный штрихкод</th>
       <th>Штрих после ошибочного</th>
+      <th></th>
     </tr>
     <% for count in 0..@error_count - 1 %>
       <% if @errors[count][3].size < 14 %>
@@ -23,13 +41,17 @@
           <td><strong><%= @errors[count][4] %></strong></td >
           <td><strong><span style="color: red"><%= @errors[count][3] %></span></strong></td>
           <td><strong><%= @errors[count][5] %></strong></td>
-          </tr>
+          <td><%= link_to 'Исправить' %> </td>
+        </tr>
       <% end %>
     <% end %>
-  <% end %>
+  </table>
+<% end %>
+<br>
   <% if @type_errors[2] == 1 %>
+    <table>
     <tr>
-      <td colspan="6">Ошибочные штрихкоды</td>
+      <td colspan="7">Ошибочные штрихкоды</td>
     </tr>
     <tr>
       <th>Стеллаж</th>
@@ -38,6 +60,7 @@
       <th>Штрих до ошибочного</th>
       <th>Ошибочный штрихкод</th>
       <th>Штрих после ошибочного</th>
+      <th></th>
     </tr>
     <% for count in 0..@error_count - 1 %>
       <% if @errors[count][3][0,3] != '978' and @errors[count][3][0,2] != '20' and @errors[count][3].size == 14 %>
@@ -48,14 +71,17 @@
           <td><strong><%= @errors[count][4] %></strong></td >
           <td><strong><span style="color: red"><%= @errors[count][3] %></span></strong></td>
           <td><strong><%= @errors[count][5] %></strong></td>
+          <td><%= link_to 'Исправить' %> </td>
           </tr>
       <% end %>
     <% end %>
+  </table>
   <% end %>
-
+<br>
   <% if @type_errors[3] == 1 %>
+  <table>
     <tr>
-      <td colspan="6">Штрихкоды начинающиеся на 978</td>
+      <td colspan="8">Штрихкоды начинающиеся на 978</td>
     </tr>
     <tr>
       <th>Стеллаж</th>
@@ -74,11 +100,15 @@
           <td><strong><%= @errors[count][4] %></strong></td >
           <td><strong><span style="color: red"><%= @errors[count][3] %></span></strong></td>
           <td><strong><%= @errors[count][5] %></strong></td>
-          </tr>
+          <td><%= link_to 'Исправить' %> </td>
+          <td><%= link_to 'Игнорировать' %> </td>
+        </tr>
       <% end %>
   <% end %>
 <% end %>
 </table>
 <% else %>
-  Ошибок в файлах не обнаруженно
+  Ошибок в файлах не обнаруженно<br>
+  Создан сводный файл (лежит в папке с файлами инвенторизации)
 <% end %>
+</div>

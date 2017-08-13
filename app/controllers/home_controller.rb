@@ -25,7 +25,7 @@ class HomeController < ApplicationController
 
     files_names.each do |i|
       if i[4,3] == "TXT"
-        file = File.new("i/R/" + i[0,3] + ".txt", 'w')
+        file = File.new("i/R/" + i[0,3] + ".TXT", 'w')
         original_file = File.open("i/" + i, 'r')
         original_file.each_line do |line|
           regex = /^(\d{3,})/.match (line)
@@ -35,7 +35,7 @@ class HomeController < ApplicationController
         file.close
         original_file.close
       elsif i[4,3] == "pwd"
-        file = File.new("i/R/" + i[0,3] + ".txt", 'w')
+        file = File.new("i/R/" + i[0,3] + ".TXT", 'w')
         original_file = File.open("i/" + i, 'r')
         original_file.each_line do |line|
           regex = /^(\d{3,})/.match (line)
@@ -52,7 +52,7 @@ class HomeController < ApplicationController
     count = 1
     @table = Array.new(@book_count + 1).map! { Array.new(2) }
     files_names.each do |i|
-        file = File.open("i/R/" + i[0,3] + '.txt')
+        file = File.open("i/R/" + i[0,3] + '.TXT')
         stelaj_index = 1
         file.each_line do |line|
           @table[count][0] = stelaj_index
@@ -93,6 +93,20 @@ class HomeController < ApplicationController
         @errors[@error_count][5] = @table[i+1][2].to_s
         @error_count += 1
       end
+    end
+    if @error_count == 0
+      FileUtils.rm_r('i/Резерв') if FileTest::exist?("i/Резерв")                #Удаление папки i/Резерв в случае если она существует
+      Dir.mkdir("i/Резерв")
+
+      # files_names.each do |i|
+      #   FileUtils.move("i/" + i, "i/Резерв/" + i) if FileTest::exist?("i/Резерв/" + i) == "false"
+      # end
+
+      file = File.new("i/Сводный.txt", 'w')
+      for i in 1..(count - 1)
+        file.puts @table[i][1] + " " + @table[i][2]
+      end
+      file.close
     end
   end
 end
