@@ -4,28 +4,27 @@ class HomeController < ApplicationController
     file_count = 1
     file_exist = 1
     files_names = []
-    while file_exist == 1 do
+    while file_exist == 1 do                                                    #Формирование списка файлов
       names_now = '000'
       names_now[2 - file_count.to_s.length + 1, file_count.to_s.length] = file_count.to_s
       if FileTest::exist?("i/" + names_now + ".TXT")
-        names_now = names_now + ".TXT"
-        files_names[file_count-1] = names_now
+        files_names[file_count-1] = names_now + ".TXT"
       elsif FileTest::exist?("i/" + names_now + ".pwd")
-        names_now = names_now + ".pwd"
-        files_names[file_count-1] = names_now
+        files_names[file_count-1] = names_now + ".pwd"
+      elsif FileTest::exist?("i/" + names_now + ".txt")
+        files_names[file_count-1] = names_now  + ".txt"
       else
         file_exist = 0
       end
       file_count += 1
     end
-    # files_names[file_count-2] = "" if file_exist == 0
 
     FileUtils.rm_r('i/R') if FileTest::exist?("i/R")                            #Удаление папки i/R в случае если она существует
     Dir.mkdir("i/R")                                                            # Создание папки i/R
 
     files_names.each do |i|
       if i[4,3] == "TXT"
-        file = File.new("i/R/" + i[0,3] + ".TXT", 'w')
+        file = File.new("i/R/" + i[0,3] + ".txt", 'w')
         original_file = File.open("i/" + i, 'r')
         original_file.each_line do |line|
           regex = /^(\d{3,})/.match (line)
@@ -35,7 +34,7 @@ class HomeController < ApplicationController
         file.close
         original_file.close
       elsif i[4,3] == "pwd"
-        file = File.new("i/R/" + i[0,3] + ".TXT", 'w')
+        file = File.new("i/R/" + i[0,3] + ".txt", 'w')
         original_file = File.open("i/" + i, 'r')
         original_file.each_line do |line|
           regex = /^(\d{3,})/.match (line)
@@ -46,13 +45,19 @@ class HomeController < ApplicationController
         end
         file.close
         original_file.close
+      elsif i[4,3] == "txt"
+        original_file = File.open("i/" + i, 'r')
+        original_file.each_line do |line|
+          @book_count += 1
+        end
+        FileUtils.copy("i/" + i[0,3] + ".txt", "i/R/")
       end
     end
 
     count = 1
     @table = Array.new(@book_count + 1).map! { Array.new(2) }
     files_names.each do |i|
-        file = File.open("i/R/" + i[0,3] + '.TXT')
+        file = File.open("i/R/" + i[0,3] + '.txt')
         stelaj_index = 1
         file.each_line do |line|
           @table[count][0] = stelaj_index
@@ -94,19 +99,22 @@ class HomeController < ApplicationController
         @error_count += 1
       end
     end
+      Dir.mkdir("i/Резерв") if !FileTest::exist?("i/Резерв")                    #Удаление папки i/Резерв в случае если она существует
+
+      files_names.each do |i|
+        if FileTest::exist?("i/" + i[0,3] + '.TXT') or FileTest::exist?("i/" + i[0,3] + '.pwd')
+          FileUtils.move("i/" + i, "i/Резерв/" + i)
+          FileUtils.move("i/R/" + i[0,3] + '.txt', "i/")
+        end
+      end
+
     if @error_count == 0
-      FileUtils.rm_r('i/Резерв') if FileTest::exist?("i/Резерв")                #Удаление папки i/Резерв в случае если она существует
-      Dir.mkdir("i/Резерв")
-
-      # files_names.each do |i|
-      #   FileUtils.move("i/" + i, "i/Резерв/" + i) if FileTest::exist?("i/Резерв/" + i) == "false"
-      # end
-
       file = File.new("i/Сводный.txt", 'w')
       for i in 1..(count - 1)
         file.puts @table[i][1] + " " + @table[i][2]
       end
       file.close
     end
+    FileUtils.rm_r('i/R')
   end
 end
