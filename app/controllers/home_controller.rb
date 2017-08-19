@@ -116,5 +116,14 @@ class HomeController < ApplicationController
       file.close
     end
     FileUtils.rm_r('i/R')
+
+    Axlsx::Package.new do |p|                                                   #Создание и заполнение экселевского файла
+      p.workbook.add_worksheet(:name => "Сводные данные") do |sheet|
+        (count - 1).times do |i|
+          sheet.add_row [@table[i][1], @table[i][2]] if @table[i][1] and @table[i][2]
+        end
+        p.serialize('Сводные данные.xlsx')
+      end
+    end
   end
 end

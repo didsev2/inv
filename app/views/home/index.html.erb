@@ -108,13 +108,24 @@
 <% end %>
 </table>
 <% else %>
-  <table>
-    <tr>
-      <td>Ошибок в файлах не обнаруженно</td>
-    </tr>
-    <tr>
-      <td>Создан сводный файл (лежит в папке с файлами инвенторизации)</td>
-    </tr>
-  </table>
+<div class="wrapper">
+  <div>
+    <table>
+      <tr>
+        <td>Ошибок в файлах не обнаруженно</td>
+      </tr>
+      <tr>
+        <td>Создан сводный файл (лежит в папке с файлами инвентаризации)</td>
+      </tr>
+    </table>
+  </div>
+  <div>
+    <table>
+      <tr>
+        <td><%= link_to 'Download as .xlsx' %></td>
+      </tr>
+    </table>
+  </div>
+</div>
 <% end %>
 </div>
